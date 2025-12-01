@@ -1,0 +1,63 @@
+# Top-level platform config. Loaded by every component.
+platform:
+  name: mlops-platform
+  env: dev
+  region: us-east-1
+
+feature_store:
+  provider: feast
+  registry: postgresql://feast:feast@postgres:5432/feast_registry
+  online_store:
+    type: redis
+    connection_string: "redis:6379"
+  offline_store:
+    type: postgres
+    host: postgres
+    port: 5432
+    database: feast_offline
+    user: feast
+    password: feast
+
+registry:
+  type: mlflow
+  tracking_uri: http://mlflow:5000
+  s3_artifact_root: s3://mlops-artifacts/mlflow
+  promotion:
+    require_min_metric: 0.7
+    metric_name: roc_auc
+    require_drift_check: true
+
+orchestrator:
+  type: prefect
+  api_url: http://prefect:4200/api
+  default_work_pool: mlops-pool
+
+serving:
+  type: kserve
+  namespace: kserve-models
+  default_runtime: kserve-sklearnserver
+
+monitoring:
+  prometheus_pushgateway: http://pushgateway:9091
+  drift:
+    threshold: 0.2
+    schedule: "0 * * * *"
+  grafana_url: http://grafana:3000
+
+dashboard:
+  host: 0.0.0.0
+  port: 8080
+
+projects:
+  - name: churn
+    target: churned
+    feature_view: churn_features
+    objective: classification
+  - name: fraud
+    target: is_fraud
+    feature_view: fraud_features
+    objective: classification
+  - name: recommender
+    target: clicked
+    feature_view: rec_features
+    objective: ranking
