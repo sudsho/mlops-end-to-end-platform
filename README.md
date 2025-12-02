@@ -77,9 +77,18 @@ training script, and feature view definitions. They all register with
 the same MLflow tracking server and serve through the same KServe
 namespace.
 
+## Prereqs
+
+- Python 3.12
+- Docker + docker compose
+- (optional) a kube cluster with KServe installed for real serving;
+  otherwise the local stack runs everything except KServe and falls
+  back to a FastAPI shim for inference
+
 ## Quickstart
 
 ```
+cp .env.example .env
 make install
 docker compose up -d                # postgres, redis, mlflow, prefect, dashboard
 mlops project new --name churn      # already provisioned, this is just the cmd
