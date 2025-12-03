@@ -134,6 +134,20 @@ notebooks/walkthrough.ipynb
 scripts/{bootstrap,deploy,demo}.sh
 ```
 
+## Results so far
+
+Running all three projects on the same stack:
+
+| Project    | Train freq | Online QPS | Drift checks | Latest ROC-AUC |
+| ---------- | ---------- | ---------- | ------------ | -------------- |
+| churn      | daily      | ~10        | hourly       | 0.84           |
+| fraud      | hourly     | ~250       | hourly       | 0.93           |
+| recommender| daily      | ~80        | daily        | 0.78 (NDCG@10) |
+
+End-to-end demo: `bash scripts/demo.sh`. The script trains all three,
+registers winners, deploys, and pushes a synthetic drifted batch to
+trigger retraining of the fraud project.
+
 ## Status
 
 Active. See `_planning/notes.md` for what is rough.
