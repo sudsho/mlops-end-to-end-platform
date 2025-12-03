@@ -98,6 +98,42 @@ mlops deploy --project churn --target staging
 mlops status
 ```
 
+## CLI surface
+
+```
+mlops project new --name <p>           # provision a project on the platform
+mlops train --project <p>               # kick off a training run via prefect
+mlops register --project <p> ...        # register the latest run with mlflow + apply policy
+mlops deploy --project <p> --target <env>
+mlops drift --project <p>               # ad-hoc drift check (also runs hourly)
+mlops status                            # show all projects + their state
+```
+
+## Repo layout
+
+```
+src/
+  cli/                # click cli
+  feature_store/      # feast wrapper + feature definitions
+  orchestrator/       # prefect flows
+  registry/           # mlflow client + promotion policy
+  serving/            # kserve manifests + transformer
+  monitoring/         # evidently + prometheus exporter
+  dashboard/          # fastapi + html
+examples/
+  churn/
+  fraud/
+  recommender/
+infra/
+  terraform/          # rds, elasticache, s3, ecs (prefect), eks (kserve)
+  prometheus/
+  grafana/
+configs/platform.yaml
+tests/
+notebooks/walkthrough.ipynb
+scripts/{bootstrap,deploy,demo}.sh
+```
+
 ## Status
 
 Active. See `_planning/notes.md` for what is rough.
