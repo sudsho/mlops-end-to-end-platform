@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>mlops-platform dashboard</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+           max-width: 920px; margin: 2em auto; color: #222; }
+    h1 { border-bottom: 1px solid #ddd; padding-bottom: .3em; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+    th, td { text-align: left; padding: .5em .8em; border-bottom: 1px solid #eee; }
+    th { background: #fafafa; }
+    .pill { display: inline-block; padding: .15em .5em; border-radius: 4px;
+            background: #eee; font-size: .85em; }
+    .ok { background: #d4edda; color: #155724; }
+    .warn { background: #fff3cd; color: #856404; }
+    .err { background: #f8d7da; color: #721c24; }
+    code { background: #f3f3f3; padding: .1em .3em; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>{{ cfg.name }}</h1>
+  <p>env: <span class="pill">{{ cfg.env }}</span> region: <span class="pill">{{ cfg.region }}</span></p>
+
+  <h2>Projects</h2>
+  <table>
+    <thead>
+      <tr><th>name</th><th>objective</th><th>feature view</th><th>status</th></tr>
+    </thead>
+    <tbody>
+      {% for p in projects %}
+      <tr>
+        <td><code>{{ p.name }}</code></td>
+        <td>{{ p.objective }}</td>
+        <td>{{ p.feature_view }}</td>
+        <td><span class="pill" id="status-{{ p.name }}">loading...</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p style="margin-top:2em">
+    Links: <a href="/api/projects">/api/projects</a> &middot;
+    <a href="/metrics">/metrics</a>
+  </p>
+
+  <script>
+    async function refresh(){
+      const r = await fetch("/api/projects");
+      const j = await r.json();
+      for (const p of j.projects) {
+        const s = await fetch("/api/projects/" + p.name + "/status");
+        const sj = await s.json();
+        const el = document.getElementById("status-" + p.name);
+        const versions = (sj.deployments || []).map(d => d.stage).join(",");
+        el.textContent = sj.latest_run_id ? ("run " + sj.latest_run_id.slice(0,8) + " " + versions) : "no runs";
+        el.classList.add(sj.latest_run_id ? "ok" : "warn");
+      }
+    }
+    refresh();
+    setInterval(refresh, 15000);
+  </script>
+</body>
+</html>
