@@ -1,0 +1,35 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: {{ project }}
+  namespace: {{ namespace }}
+  annotations:
+    serving.kserve.io/deploymentMode: Serverless
+spec:
+  predictor:
+    minReplicas: {{ min_replicas|default(1) }}
+    maxReplicas: {{ max_replicas|default(3) }}
+    sklearn:
+      storageUri: "{{ model_uri }}"
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "1"
+          memory: "1Gi"
+  transformer:
+    containers:
+      - name: kserve-container
+        image: {{ transformer_image|default("ghcr.io/sudsho/mlops-platform-transformer:latest") }}
+        env:
+          - name: PROJECT
+            value: "{{ project }}"
+          - name: FEATURE_VIEW
+            value: "{{ feature_view }}"
+          - name: ENTITY_KEYS
+            value: "{{ entity_keys|join(',') }}"
+          - name: MLFLOW_TRACKING_URI
+            value: "{{ mlflow_uri }}"
+          - name: PROMETHEUS_PUSHGATEWAY
+            value: "{{ pushgateway }}"
