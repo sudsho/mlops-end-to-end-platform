@@ -56,12 +56,17 @@ def train(data_path: str | None = None) -> Result:
     pipe.fit(Xtr, ytr)
     proba = pipe.predict_proba(Xte)[:, 1]
     pred = (proba > 0.5).astype(int)
+    auc = float(roc_auc_score(yte, proba))
+    acc = float(accuracy_score(yte, pred))
+    # also pin a positive-class share for sanity check downstream
+    pos_rate = float(yte.mean())
     return Result(
         model=pipe,
         metrics={
-            "roc_auc": float(roc_auc_score(yte, proba)),
-            "accuracy": float(accuracy_score(yte, pred)),
-            "n_train": len(Xtr),
+            "roc_auc": auc,
+            "accuracy": acc,
+            "pos_rate": pos_rate,
+            "n_train": float(len(Xtr)),
         },
     )
 
