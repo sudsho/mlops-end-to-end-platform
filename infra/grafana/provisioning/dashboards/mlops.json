@@ -1,0 +1,28 @@
+{
+  "title": "mlops platform",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Train runs (1h)",
+      "targets": [
+        {"expr": "sum by (project) (increase(mlops_train_runs_total[1h]))"}
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Drift score by project",
+      "targets": [
+        {"expr": "mlops_drift_score"}
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Inference latency p95",
+      "targets": [
+        {"expr": "histogram_quantile(0.95, sum(rate(mlops_inference_latency_s_bucket[5m])) by (le, project))"}
+      ]
+    }
+  ]
+}
