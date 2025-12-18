@@ -59,9 +59,11 @@ def train_flow(project: str, threshold: float = 0.7) -> dict[str, Any]:
 @flow(name="retrain-on-drift")
 def retrain_on_drift_flow(project: str, drift_threshold: float = 0.2) -> dict[str, Any]:
     from monitoring.drift import current_drift_score
+    from monitoring.exporter import push_drift
 
     log = get_run_logger()
     score = current_drift_score(project)
+    push_drift(project, score)
     log.info("drift score for %s = %.3f", project, score)
     if score < drift_threshold:
         return {"project": project, "retrained": False, "drift": score}
@@ -71,3 +73,21 @@ def retrain_on_drift_flow(project: str, drift_threshold: float = 0.2) -> dict[st
     out["drift"] = score
     out["retrained"] = True
     return out
+
+
+@flow(name="batch-score")
+def batch_score_flow(project: str, input_path: str, output_path: str) -> dict[str, Any]:
+    """Run a batch scoring job using the latest Production model."""
+    import pandas as pd
+    import mlflow.pyfunc
+
+    from registry.client import get_latest_model_uri
+
+    log = get_run_logger()
+    uri = get_latest_model_uri(project, stage="Production")
+    log.info("loading model %s", uri)
+    model = mlflow.pyfunc.load_model(uri)
+    df = pd.read_parquet(input_path)
+    df["score"] = model.predict(df)
+    df.to_parquet(output_path, index=False)
+    return {"project": project, "rows": len(df), "out": output_path}
