@@ -1,0 +1,9 @@
+customer_id,tenure_months,monthly_charges,total_charges,contract_type,internet_service,payment_method,num_support_calls_30d,num_late_payments_90d,auto_pay,paperless_billing,churned,event_ts
+c000000,12,55.30,650.10,mtm,fiber,card,0,0,1,1,0,2025-11-20T08:12:00
+c000001,3,89.20,260.30,mtm,fiber,check,2,1,0,0,1,2025-11-21T08:12:00
+c000002,55,40.10,2200.20,2yr,dsl,transfer,0,0,1,0,0,2025-11-22T08:12:00
+c000003,30,65.55,1900.40,1yr,fiber,card,1,0,1,1,0,2025-11-23T08:12:00
+c000004,1,99.30,99.30,mtm,fiber,check,3,2,0,1,1,2025-11-24T08:12:00
+c000005,72,35.00,2520.00,2yr,dsl,transfer,0,0,1,0,0,2025-11-25T08:12:00
+c000006,8,79.95,640.10,mtm,fiber,card,1,1,0,1,1,2025-11-26T08:12:00
+c000007,40,50.00,2000.00,1yr,dsl,card,0,0,1,1,0,2025-11-27T08:12:00
