@@ -96,6 +96,22 @@ services:
       - mlflow
       - prefect
 
+  # Optional KServe shim. Only starts under the `shim` profile so people
+  # with a real kube cluster don't run a second copy.
+  kserve-shim:
+    profiles: ["shim"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn serving.shim_runner:app --host 0.0.0.0 --port 8081
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MLOPS_SHIM_PROJECTS: churn,fraud,recommender
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mlflow
+
 volumes:
   pgdata:
   miniodata:
