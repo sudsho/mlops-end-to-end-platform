@@ -1,0 +1,31 @@
+{
+  "_note": "captured after the first end-to-end run with seed=42 on the synthetic data generators. these are the numbers the registry promotion policy compares new runs against.",
+  "churn": {
+    "metric": "roc_auc",
+    "value": 0.842,
+    "threshold": 0.7,
+    "n_train": 8000,
+    "n_eval": 2000,
+    "model": "xgboost-1.7",
+    "trained_at": "2025-12-19T20:30:11+05:30"
+  },
+  "fraud": {
+    "metric": "roc_auc",
+    "value": 0.931,
+    "threshold": 0.85,
+    "n_train": 60000,
+    "n_eval": 15000,
+    "model": "lightgbm-4.5",
+    "trained_at": "2025-12-19T20:35:42+05:30",
+    "notes": "class imbalance handled with scale_pos_weight=58. recall at 0.5 cutoff = 0.71."
+  },
+  "recommender": {
+    "metric": "ndcg_at_10",
+    "value": 0.781,
+    "threshold": 0.6,
+    "n_train": 200000,
+    "n_eval": 25000,
+    "model": "lightfm-1.17",
+    "trained_at": "2025-12-19T20:39:08+05:30"
+  }
+}
