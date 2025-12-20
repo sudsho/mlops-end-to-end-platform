@@ -1,0 +1,39 @@
+.git
+.gitignore
+.github
+.vscode
+.idea
+.venv
+venv
+env
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.ruff_cache
+.mypy_cache
+*.egg-info
+build
+dist
+
+# tests / notebooks / docs aren't needed in the runtime image
+tests
+notebooks
+_planning
+_tmp
+docs
+
+# big locally generated stuff
+mlruns
+wandb
+data/raw
+data/processed
+**/feature_repo/data/*.parquet
+**/feature_repo/data/*.db
+
+# secrets
+.env
+.env.local
+*.pem
+*.key

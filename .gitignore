@@ -31,3 +31,4 @@ registry.db
 
 # docker
 .dockerignore_local
+docker-compose.override.yml

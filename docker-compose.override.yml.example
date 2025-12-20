@@ -1,0 +1,21 @@
+# Local dev override. Copy to docker-compose.override.yml (gitignored) and
+# `docker compose up` will merge the two automatically.
+#
+# Mounts the source tree into the dashboard container and runs uvicorn with
+# --reload so editing src/ refreshes the running app.
+
+services:
+  dashboard:
+    command: uvicorn dashboard.app:app --host 0.0.0.0 --port 8080 --reload
+    volumes:
+      - ./src:/app/src
+      - ./configs:/app/configs
+    environment:
+      MLOPS_ENV: dev
+      LOG_LEVEL: DEBUG
+
+  kserve-shim:
+    command: uvicorn serving.shim_runner:app --host 0.0.0.0 --port 8081 --reload
+    volumes:
+      - ./src:/app/src
+      - ./examples:/app/examples
