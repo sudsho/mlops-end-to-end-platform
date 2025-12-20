@@ -69,3 +69,22 @@ def push_run_finished(project: str, status: str = "success") -> None:
         push_to_gateway(gw, job=f"train-{project}", registry=reg)
     except Exception:
         logger.exception("could not push run metrics")
+
+
+def push_eval_metric(project: str, metric: str, value: float, run_id: str | None = None) -> None:
+    """Push the headline eval metric of a fresh run so grafana can plot it.
+
+    Kept separate from push_run_finished so the counter stays a counter and
+    the value stays a gauge with its own job label.
+    """
+    reg = CollectorRegistry()
+    g = Gauge(f"mlops_eval_{metric}", f"latest {metric}", ["project"], registry=reg)
+    g.labels(project=project).set(value)
+    ts = Gauge("mlops_eval_pushed_at", "unix ts of last metric push", ["project"], registry=reg)
+    ts.labels(project=project).set(time.time())
+    gw = os.environ.get("PROMETHEUS_PUSHGATEWAY", "http://pushgateway:9091")
+    job = f"eval-{project}" if run_id is None else f"eval-{project}-{run_id[:8]}"
+    try:
+        push_to_gateway(gw, job=job, registry=reg)
+    except Exception:
+        logger.exception("could not push eval metric")

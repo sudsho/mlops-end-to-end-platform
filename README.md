@@ -144,9 +144,25 @@ Running all three projects on the same stack:
 | fraud      | hourly     | ~250       | hourly       | 0.93           |
 | recommender| daily      | ~80        | daily        | 0.78 (NDCG@10) |
 
+Baseline numbers from the first clean run live in
+`examples/_data/baseline_metrics.json` and are what the registry
+promotion policy compares against. New runs above the threshold get
+auto-promoted to staging; below, auto-rejected.
+
 End-to-end demo: `bash scripts/demo.sh`. The script trains all three,
 registers winners, deploys, and pushes a synthetic drifted batch to
 trigger retraining of the fraud project.
+
+### Screenshots
+
+| Where                          | What you see                                    |
+| ------------------------------ | ----------------------------------------------- |
+| dashboard (`localhost:8080`)   | per-project state, last run, drift score, QPS  |
+| MLflow (`localhost:5000`)      | runs, params, metrics, registered models       |
+| Prefect (`localhost:4200`)     | flow runs, schedules, drift triggers           |
+| Grafana (`localhost:3000`)     | eval metric history + inference latency        |
+
+(screenshots in `docs/screenshots/` once I take them after the next demo run.)
 
 ## Status
 
