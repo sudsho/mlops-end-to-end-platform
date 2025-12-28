@@ -1,4 +1,6 @@
 # Example CI workflow. Copy to .github/workflows/test.yml when ready.
+# (kept here as .example because the gh token used for backfill doesn't
+# have the workflow scope; user can move it manually.)
 name: test
 
 on:
@@ -7,12 +9,17 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   pytest:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.12"]
+        python-version: ["3.11", "3.12"]
     services:
       postgres:
         image: postgres:16
@@ -32,20 +39,64 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            pyproject.toml
       - name: install
         run: |
           python -m pip install -U pip
           pip install -r requirements.txt
           pip install -e .
+          pip install pytest-cov ruff
       - name: lint
         run: ruff check src tests
       - name: test
-        run: pytest -q
+        env:
+          POSTGRES_HOST: localhost
+          REDIS_HOST: localhost
+        run: pytest -q --cov=src --cov-report=xml
+      - name: upload coverage
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
 
   build:
     runs-on: ubuntu-latest
     needs: pytest
     steps:
       - uses: actions/checkout@v4
+      - name: set up buildx
+        uses: docker/setup-buildx-action@v3
       - name: build dashboard image
-        run: docker build -t mlops-platform-dashboard:ci .
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: mlops-platform-dashboard:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  smoke:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - name: bring up minimal stack
+        run: |
+          cp .env.example .env
+          docker compose up -d postgres redis minio mlflow
+      - name: wait for mlflow
+        run: |
+          for i in {1..30}; do
+            if curl -sf http://localhost:5000/health >/dev/null; then
+              echo "mlflow up"; break
+            fi
+            sleep 2
+          done
+      - name: tear down
+        if: always()
+        run: docker compose down -v
