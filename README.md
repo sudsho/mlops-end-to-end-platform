@@ -68,9 +68,9 @@ concurrently.
 
 Three projects share the platform:
 
-1. **churn** — telco churn classifier, daily batch retrain, low traffic
-2. **fraud** — card fraud, near-real-time scoring, drift watch hourly
-3. **recommender** — homepage ranker, multi-armed pipeline, A/B tested
+1. **churn** - telco churn classifier, daily batch retrain, low traffic
+2. **fraud** - card fraud, near-real-time scoring, drift watch hourly
+3. **recommender** - homepage ranker, multi-armed pipeline, A/B tested
 
 Each example lives under `examples/<project>/` with its own data,
 training script, and feature view definitions. They all register with
