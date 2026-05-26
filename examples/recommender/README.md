@@ -1,8 +1,9 @@
 # recommender (example project)
 
-Homepage ranker. Daily retraining. ~80 QPS for online scoring.
+Homepage ranker. Daily retraining schedule.
 
-- Data: synthetic clickstream, user/item features
+- Data: synthetic clickstream with user/item features
 - Features: user_engagement_30d, item_popularity, content_match, ...
 - Target: `clicked`
-- Metric: NDCG@10 (modeled here as a binary classifier and ranked at serve time)
+- Metric: NDCG@10 (modeled as a binary classifier and ranked at serve time)
+- Model: scikit-learn LogisticRegression

@@ -1,8 +1,9 @@
 # fraud (example project)
 
-Card fraud classifier. Hourly retraining. Higher QPS (~250) and stricter drift watch.
+Card fraud classifier. Hourly retraining schedule with hourly drift check.
 
-- Data: synthetic transactions, ~200k rows
+- Data: synthetic transactions from `examples/_data/make_synthetic.py`
 - Features: amount, merchant_category, time_since_last_tx, is_card_present, ...
 - Target: `is_fraud`
-- Metric: ROC-AUC, with class imbalance handled in training
+- Metric: ROC-AUC
+- Model: scikit-learn LogisticRegression with `class_weight='balanced'`

@@ -1,6 +1,4 @@
 # Example CI workflow. Copy to .github/workflows/test.yml when ready.
-# (kept here as .example because the gh token used for backfill doesn't
-# have the workflow scope; user can move it manually.)
 name: test
 
 on:

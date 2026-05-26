@@ -2,11 +2,12 @@
 
 When there is no kube cluster around (laptop / CI / smoke test) we still
 want `mlops deploy` to land somewhere predictable. This module spins up a
-small FastAPI app per project that mimics the V2 inference protocol just
-well enough that the dashboard's online QPS panel keeps working.
+small FastAPI app per project that mimics the V2 inference protocol.
 
 It is NOT a replacement for KServe in prod. The point is to keep the dev
-loop short.
+loop short. To actually mount a project the transformer module at
+`examples.<project>.serving_transformer` must exist and expose `predict`;
+this repo does not ship one, so the local shim starts empty by default.
 """
 from __future__ import annotations
 
