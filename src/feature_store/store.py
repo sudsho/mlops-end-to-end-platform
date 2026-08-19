@@ -21,11 +21,12 @@ def _get_repo_path(project: str) -> Path:
 
 def get_store(project: str):
     """Return a feast FeatureStore for the given project."""
-    from feast import FeatureStore
-
     repo = _get_repo_path(project)
     if not repo.exists():
         raise FileNotFoundError(f"feature repo missing at {repo}")
+
+    from feast import FeatureStore
+
     return FeatureStore(repo_path=str(repo))
 
 

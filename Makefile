@@ -1,4 +1,4 @@
-.PHONY: help install install-dev test test-cov lint fmt up up-shim down logs demo seed clean
+.PHONY: help install install-dev test test-cov lint fmt up up-shim down logs demo smoke seed clean
 
 PY?=python
 COMPOSE?=docker compose
@@ -12,6 +12,7 @@ help:
 	@echo "make logs          tail logs"
 	@echo "make seed          create minio buckets"
 	@echo "make demo          run the end-to-end demo (bootstrap + train + deploy + drift)"
+	@echo "make smoke         run the offline core-lifecycle smoke (no docker/cloud)"
 	@echo "make test          run unit tests"
 	@echo "make test-cov      run unit tests with coverage"
 	@echo "make lint          ruff check"
@@ -54,6 +55,9 @@ seed:
 
 demo:
 	bash scripts/demo.sh
+
+smoke:
+	$(PY) scripts/smoke.py
 
 clean:
 	rm -rf .pytest_cache .ruff_cache __pycache__ build dist *.egg-info coverage.xml .coverage

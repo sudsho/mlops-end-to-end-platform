@@ -16,7 +16,12 @@ __pycache__/
 data/raw/
 data/processed/
 mlruns/
+mlflow.db
 wandb/
+
+# smoke / local run artifacts
+artifacts/
+*.db
 
 # feast
 **/feature_repo/data/*.parquet
